@@ -1,5 +1,6 @@
 import app.schemas as schemas
 import app.models as models
+import app.security as security
 
 
 def get_user_by_email(db, email):
@@ -14,8 +15,8 @@ def get_user(db, user_id):
 
 
 def create_user(db, user: schemas.UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
+    hashed_password = security.get_password_hash(user.password)
+    db_user = models.User(email=user.email, hashed_password=hashed_password)
     # создаем объект модели Users
 
     db.add(db_user)  # добавляем объект в сессию
