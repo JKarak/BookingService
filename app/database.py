@@ -1,13 +1,15 @@
-from sqlalchemy import create_engine # для подключения к бд
+from sqlalchemy import create_engine  # для подключения к бд
 from sqlalchemy.orm import declarative_base, sessionmaker
+
 # declarative_base для создания класса моделей
 # sessionmaker для настройки сессий
+
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-) # объект для управления соединениями с бд
+)  # объект для управления соединениями с бд
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # создаем класс для сессий, autocommit=False отключает автокоммит,
@@ -16,3 +18,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 # Создает базовый класс (Base), от которого будут наследоваться все будущие ORM-модели (классы таблиц)
+
+
+def get_db():
+    db = SessionLocal()  # создаем объект сессии
+    try:
+        yield db  # возвращаем созданную сессию
+    finally:
+        db.close()  # закрываем сессию
